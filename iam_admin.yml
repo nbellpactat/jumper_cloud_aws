@@ -1,15 +1,25 @@
-Type: AWS::IAM::User
-Properties:
-  Groups:
-    - String
-  LoginProfile:
-    LoginProfile
-  ManagedPolicyArns:
-    - String
-  Path: String
-  PermissionsBoundary: String
-  Policies:
-    - Policy
-  Tags:
-    - Tag
-  UserName: String
+Parameters:
+  AdminUserName:
+    Description: Name of the user to provide Administrator Access
+  AdminInitialPassword:
+    Description: Password to provide the User for initial access, will be reset upon first login
+
+Resources:
+  AdminGroup:
+    Type: AWS::IAM::Group
+    Properties:
+      GroupName: Admin
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AdministratorAccess
+      Path: /
+
+  AdminUser:
+    Type: AWS::IAM::User
+    Properties:
+      Groups:
+        - !Ref AdminGroup
+      LoginProfile:
+        Password: !Ref AdminInitialPassword
+        PasswordResetRequired: True
+      Path: /
+      UserName: !Ref AdminUserName
