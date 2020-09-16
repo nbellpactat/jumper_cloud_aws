@@ -1,6 +1,7 @@
 Parameters:
   AdminUserName:
     Description: Name of the user to provide Administrator Access
+    Type: String
   AdminInitialPassword:
     Description: Password to provide the User for initial access, will be reset upon first login
 
