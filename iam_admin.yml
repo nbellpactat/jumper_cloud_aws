@@ -5,6 +5,7 @@ Parameters:
   AdminInitialPassword:
     Description: Password to provide the User for initial access, will be reset upon first login
     Type: String
+    NoEcho: True
 
 Resources:
   AdminGroup:
