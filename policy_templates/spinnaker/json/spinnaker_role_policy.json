@@ -1,0 +1,13 @@
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Action": [
+                "iam:PassRole"
+            ],
+            "Resource": "arn:aws:iam::777125865903:role/Spinnaker-BaseIAMRole-12AE9BAXJJI02",
+            "Effect": "Allow",
+            "Sid": "Stmt1449267121000"
+        }
+    ]
+}
