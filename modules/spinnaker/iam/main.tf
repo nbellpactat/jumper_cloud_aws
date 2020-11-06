@@ -51,7 +51,7 @@ resource "aws_iam_user_policy_attachment" "spinnaker_poweruser" {
 
 // Is PowerUserAccess needed on this Role?
 resource "aws_iam_role_policy_attachment" "spinnaker_poweruser" {
-  role = aws_iam_role.spinnaker_role.arn
+  role = aws_iam_role.spinnaker_role.name
   policy_arn = data.aws_iam_policy.power_user.arn
 }
 
