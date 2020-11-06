@@ -33,7 +33,7 @@ resource "aws_internet_gateway" "internet_gateway" {
 }
 
 resource "aws_eip" "nat_gateway" {
-  vpc = false
+  vpc = true
 
   tags = {
     name = var.nat_eip_name

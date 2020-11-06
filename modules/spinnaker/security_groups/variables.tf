@@ -1,0 +1,1 @@
+variable "spinnaker_vpc_id" {}
