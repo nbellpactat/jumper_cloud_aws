@@ -24,7 +24,7 @@ resource "aws_key_pair" "spinnaker" {
 }
 
 resource "aws_iam_instance_profile" "ssm_session" {
-  name = "ssm_profile"
+  Name = "ssm_profile"
   role = data.aws_iam_role.ssm_session.name
 }
 
@@ -46,6 +46,6 @@ resource "aws_instance" "spinnaker" {
   vpc_security_group_ids = [var.spinnaker_security_group_id]
 
   tags = {
-    name = "spinnaker"
+    Name = "spinnaker"
   }
 }

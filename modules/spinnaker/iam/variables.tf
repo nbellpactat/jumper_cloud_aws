@@ -1,13 +1,13 @@
 variable "spinnaker_iam_user_name" {
   type        = string
   description = "Name for the IAM User for Spinnaker"
-  default     = "spinnaker_iam_user"
+  default     = "spinnaker-iam-user"
 }
 
 variable "spinnaker_base_role_name" {
   type        = string
   description = "Name for the Base IAM Role for Spinnaker"
-  default     = "spinnaker_base_role"
+  default     = "spinnaker-base-role"
 }
 
 variable "spinnaker_base_role_desc" {
@@ -18,7 +18,7 @@ variable "spinnaker_base_role_desc" {
 variable "spinnaker_role_name" {
   type        = string
   description = "Name for the Base IAM Role for Spinnaker"
-  default     = "spinnaker_role"
+  default     = "spinnaker-role"
 }
 
 variable "spinnaker_role_desc" {
