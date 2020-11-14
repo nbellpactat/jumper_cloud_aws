@@ -10,10 +10,11 @@ resource "aws_iam_role" "spinnaker_base_role" {
 }
 
 resource "aws_iam_role" "spinnaker_role" {
-  name        = var.spinnaker_role_name
-  description = var.spinnaker_role_desc
-  path        = "/"
+  name               = var.spinnaker_role_name
+  description        = var.spinnaker_role_desc
+  path               = "/"
   assume_role_policy = file("${path.root}/policy_templates/spinnaker/json/spinnaker_base_role_policy.json")
+  force_detach_policies = true
 }
 
 resource "aws_iam_role_policy" "spinnaker_passrole" {
@@ -51,7 +52,7 @@ resource "aws_iam_user_policy_attachment" "spinnaker_poweruser" {
 
 // Is PowerUserAccess needed on this Role?
 resource "aws_iam_role_policy_attachment" "spinnaker_poweruser" {
-  role = aws_iam_role.spinnaker_role.name
+  role       = aws_iam_role.spinnaker_role.name
   policy_arn = data.aws_iam_policy.power_user.arn
 }
 

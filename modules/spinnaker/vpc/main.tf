@@ -1,5 +1,7 @@
 resource "aws_vpc" "spinnaker" {
   cidr_block = var.spinnaker_vpc_cidr
+  enable_dns_support = true
+  enable_dns_hostnames = true
 
   tags = {
     name = var.spinnaker_vpc_name
@@ -67,6 +69,11 @@ resource "aws_route_table" "spinnaker_private" {
   }
 }
 
+resource "aws_route_table_association" "private" {
+  route_table_id = aws_route_table.spinnaker_private.id
+  subnet_id = aws_subnet.spinnaker_private.id
+}
+
 resource "aws_route" "nat" {
   depends_on = [aws_nat_gateway.spinnaker]
 
@@ -81,4 +88,59 @@ resource "aws_network_acl" "base" {
   tags = {
     name = "spinnaker_base_nacl"
   }
+}
+
+resource "aws_security_group" "spinnaker" {
+  name        = "spinnaker_sg"
+  description = "Security Group for Spinnaker"
+  vpc_id      = aws_vpc.spinnaker.id
+
+  tags = {
+    name = "allow_tls"
+  }
+}
+
+resource "aws_security_group_rule" "https" {
+  type              = "ingress"
+  from_port         = 443
+  to_port           = 443
+  protocol          = "tcp"
+  cidr_blocks       = [aws_vpc.spinnaker.cidr_block]
+  security_group_id = aws_security_group.spinnaker.id
+}
+
+resource "aws_vpc_endpoint" "ssm" {
+  service_name = "com.amazonaws.us-east-2.ssm"
+  vpc_id = aws_vpc.spinnaker.id
+  vpc_endpoint_type = "Interface"
+  security_group_ids = [aws_security_group.spinnaker.id, aws_vpc.spinnaker.default_security_group_id]
+  subnet_ids = [aws_subnet.spinnaker_private.id, aws_subnet.spinnaker_public.id]
+  private_dns_enabled = true
+}
+
+resource "aws_vpc_endpoint" "ssmmessages" {
+  service_name = "com.amazonaws.us-east-2.ssmmessages"
+  vpc_id = aws_vpc.spinnaker.id
+  vpc_endpoint_type = "Interface"
+  security_group_ids = [aws_security_group.spinnaker.id, aws_vpc.spinnaker.default_security_group_id]
+  subnet_ids = [aws_subnet.spinnaker_private.id, aws_subnet.spinnaker_public.id]
+  private_dns_enabled = true
+}
+
+resource "aws_vpc_endpoint" "ec2messages" {
+  service_name = "com.amazonaws.us-east-2.ec2messages"
+  vpc_id = aws_vpc.spinnaker.id
+  vpc_endpoint_type = "Interface"
+  security_group_ids = [aws_security_group.spinnaker.id, aws_vpc.spinnaker.default_security_group_id]
+  subnet_ids = [aws_subnet.spinnaker_private.id, aws_subnet.spinnaker_public.id]
+  private_dns_enabled = true
+}
+
+resource "aws_vpc_endpoint" "kms" {
+  service_name = "com.amazonaws.us-east-2.kms"
+  vpc_id = aws_vpc.spinnaker.id
+  vpc_endpoint_type = "Interface"
+  security_group_ids = [aws_security_group.spinnaker.id, aws_vpc.spinnaker.default_security_group_id]
+  subnet_ids = [aws_subnet.spinnaker_private.id, aws_subnet.spinnaker_public.id]
+  private_dns_enabled = true
 }

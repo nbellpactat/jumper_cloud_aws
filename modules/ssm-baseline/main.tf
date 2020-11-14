@@ -1,5 +1,5 @@
 resource "aws_kms_key" "ssm_session" {
-  description = "Key to be used for SSM Session traffic encryption"
+  description             = "Key to be used for SSM Session traffic encryption"
   deletion_window_in_days = 7
 
   tags = {
@@ -8,9 +8,9 @@ resource "aws_kms_key" "ssm_session" {
 }
 
 resource "aws_iam_role" "ssm" {
-  name = "ssm_session_role"
-  description = "IAM Role to provide instance access via SSM"
-  path = "/"
+  name               = "ssm_session_role"
+  description        = "IAM Role to provide instance access via SSM"
+  path               = "/"
   assume_role_policy = file("${path.root}/policy_templates/ssm_baseline/json/ssm_base_role_policy.json")
 }
 
