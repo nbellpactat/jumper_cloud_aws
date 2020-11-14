@@ -24,7 +24,7 @@ resource "aws_key_pair" "spinnaker" {
 }
 
 resource "aws_iam_instance_profile" "ssm_session" {
-  Name = "ssm_profile"
+  name = "ssm-profile"
   role = data.aws_iam_role.ssm_session.name
 }
 
