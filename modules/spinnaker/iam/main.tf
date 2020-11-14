@@ -3,14 +3,14 @@ data "aws_iam_policy" "power_user" {
 }
 
 resource "aws_iam_role" "spinnaker_base_role" {
-  Name               = var.spinnaker_base_role_name
+  name               = var.spinnaker_base_role_name
   description        = var.spinnaker_base_role_desc
   path               = "/"
   assume_role_policy = file("${path.root}/policy_templates/spinnaker/json/spinnaker_base_role_policy.json")
 }
 
 resource "aws_iam_role" "spinnaker_role" {
-  Name               = var.spinnaker_role_name
+  name               = var.spinnaker_role_name
   description        = var.spinnaker_role_desc
   path               = "/"
   assume_role_policy = file("${path.root}/policy_templates/spinnaker/json/spinnaker_base_role_policy.json")
