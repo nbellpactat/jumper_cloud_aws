@@ -9,14 +9,14 @@ resource "aws_kms_key" "ssm_session" {
 }
 
 resource "aws_iam_role" "ssm" {
-  Name               = "ssm_session_role"
+  name               = "ssm_session_role"
   description        = "IAM Role to provide instance access via SSM"
   path               = "/"
   assume_role_policy = file("${path.root}/policy_templates/ssm_baseline/json/ssm_base_role_policy.json")
 }
 
 resource "aws_iam_role_policy" "ssm_session" {
-  Name = "ssm_session_policy"
+  name = "ssm_session_policy"
   role = aws_iam_role.ssm.id
   policy = templatefile("${path.root}/policy_templates/ssm_baseline/tmpl/ssm_policy.tmpl",
     {
