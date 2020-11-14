@@ -4,25 +4,31 @@ resource "aws_vpc" "spinnaker" {
   enable_dns_hostnames = true
 
   tags = {
-    name = var.spinnaker_vpc_name
+    Name = var.spinnaker_vpc_name
   }
+}
+
+data "aws_availability_zones" "available" {
+  state = "available"
 }
 
 resource "aws_subnet" "spinnaker_private" {
   cidr_block = var.spinnaker_subnet_private_cidr
   vpc_id     = aws_vpc.spinnaker.id
+  availability_zone = data.aws_availability_zones.available.names[0]
 
   tags = {
-    name = var.spinnaker_private_subnet_name
+    Name = var.spinnaker_private_subnet_name
   }
 }
 
 resource "aws_subnet" "spinnaker_public" {
   cidr_block = var.spinnaker_subnet_public_cidr
   vpc_id     = aws_vpc.spinnaker.id
+  availability_zone = data.aws_availability_zones.available.names[1]
 
   tags = {
-    name = var.spinnaker_public_subnet_name
+    Name = var.spinnaker_public_subnet_name
   }
 }
 
@@ -30,7 +36,7 @@ resource "aws_internet_gateway" "internet_gateway" {
   vpc_id = aws_vpc.spinnaker.id
 
   tags = {
-    name = var.internet_gateway_name
+    Name = var.internet_gateway_name
   }
 }
 
@@ -38,7 +44,7 @@ resource "aws_eip" "nat_gateway" {
   vpc = true
 
   tags = {
-    name = var.nat_eip_name
+    Name = var.nat_eip_name
   }
 }
 
@@ -46,7 +52,7 @@ resource "aws_route_table" "base" {
   vpc_id = aws_vpc.spinnaker.id
 
   tags = {
-    name = "spinnaker_base_route_table"
+    Name = "spinnaker_base_route_table"
   }
 }
 
@@ -57,7 +63,15 @@ resource "aws_nat_gateway" "spinnaker" {
   subnet_id     = aws_subnet.spinnaker_public.id
 
   tags = {
-    name = var.nat_gateway_name
+    Name = var.nat_gateway_name
+  }
+}
+
+resource "aws_route_table" "spinnaker_public" {
+  vpc_id = aws_vpc.spinnaker.id
+
+  tags = {
+    Name = var.spinnaker_public_route_table_name
   }
 }
 
@@ -65,8 +79,13 @@ resource "aws_route_table" "spinnaker_private" {
   vpc_id = aws_vpc.spinnaker.id
 
   tags = {
-    name = var.spinnaker_private_route_table_name
+    Name = var.spinnaker_private_route_table_name
   }
+}
+
+resource "aws_route_table_association" "public" {
+  route_table_id = aws_route_table.spinnaker_public.id
+  subnet_id = aws_subnet.spinnaker_public.id
 }
 
 resource "aws_route_table_association" "private" {
@@ -82,11 +101,19 @@ resource "aws_route" "nat" {
   nat_gateway_id         = aws_nat_gateway.spinnaker.id
 }
 
+resource "aws_route" "igw" {
+  depends_on = [aws_internet_gateway.internet_gateway]
+
+  route_table_id = aws_route_table.spinnaker_public.id
+  destination_cidr_block = "0.0.0.0/0"
+  gateway_id = aws_internet_gateway.internet_gateway.id
+}
+
 resource "aws_network_acl" "base" {
   vpc_id = aws_vpc.spinnaker.id
 
   tags = {
-    name = "spinnaker_base_nacl"
+    Name = "spinnaker_base_nacl"
   }
 }
 
@@ -96,7 +123,7 @@ resource "aws_security_group" "spinnaker" {
   vpc_id      = aws_vpc.spinnaker.id
 
   tags = {
-    name = "allow_tls"
+    Name = "allow_tls"
   }
 }
 

@@ -3,14 +3,14 @@ data "aws_iam_policy" "power_user" {
 }
 
 resource "aws_iam_role" "spinnaker_base_role" {
-  name               = var.spinnaker_base_role_name
+  Name               = var.spinnaker_base_role_name
   description        = var.spinnaker_base_role_desc
   path               = "/"
   assume_role_policy = file("${path.root}/policy_templates/spinnaker/json/spinnaker_base_role_policy.json")
 }
 
 resource "aws_iam_role" "spinnaker_role" {
-  name               = var.spinnaker_role_name
+  Name               = var.spinnaker_role_name
   description        = var.spinnaker_role_desc
   path               = "/"
   assume_role_policy = file("${path.root}/policy_templates/spinnaker/json/spinnaker_base_role_policy.json")
@@ -34,7 +34,7 @@ resource "aws_iam_user" "spinnaker_iam_user" {
 }
 
 resource "aws_iam_user_policy" "spinnaker_passrole" {
-  name = "spinnaker_passrole_user_policy"
+  name = "spinnaker-passrole-user-policy"
   user = aws_iam_user.spinnaker_iam_user.name
 
   policy = templatefile("${path.root}/policy_templates/spinnaker/tmpl/spinnaker_passrole_policy.tmpl",
